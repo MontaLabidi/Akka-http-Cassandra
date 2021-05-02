@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  api:
+    image: ${CONTAINER_REGISTRY}/simple-api:${IMAGE_TAG}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: bash -c "/opt/target/pack/bin/main"
+    env_file:
+      - config/env.conf
+    ports:
+      - "80:80"
+    expose:
+      - "80"
+    volumes:
+      - ./logs:/logs
