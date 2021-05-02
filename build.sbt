@@ -32,5 +32,4 @@ libraryDependencies ++= Seq(
   // Used for in-memory concurrent cache.
   // The main reason i chose Scaffeine is because it supports caching futures(AsyncLoadingCache)
   "com.github.blemale" %% "scaffeine" % "3.1.0"
-
 )

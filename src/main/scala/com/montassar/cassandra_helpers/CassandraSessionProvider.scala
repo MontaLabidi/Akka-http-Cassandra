@@ -13,7 +13,7 @@ object CassandraSessionProvider extends DBCred {
   def cassandraConn: Session = {
     if (_session == null) {
       val cluster_builder =
-        new Cluster.Builder().withClusterName("Promo Decision Support")
+        new Cluster.Builder().withClusterName("Simple App")
       var cluster: Cluster = null
 
       cluster_builder
