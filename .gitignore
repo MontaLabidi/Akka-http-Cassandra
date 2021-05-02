@@ -1,2 +1,7 @@
-*.class
-*.log
+target
+!project/plugins.sbt
+logs/*
+project/target
+project/project
+*.idea
+*.iml
