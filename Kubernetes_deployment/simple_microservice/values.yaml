@@ -1,0 +1,16 @@
+# Declare variables to be passed into the templates
+namespace: simple_namespace
+
+image:
+  repository: some.registry.hub/simple-api
+  tag: 0.1
+
+replicas: 1
+
+imagePullSecrets: registryCreds
+
+resources:
+  memoryRequestsSize: 4000Mi
+  memoryLimitsSize: 5000Mi
+  cpuRequestsSize: 200m
+  cpuLimitsSize: 1

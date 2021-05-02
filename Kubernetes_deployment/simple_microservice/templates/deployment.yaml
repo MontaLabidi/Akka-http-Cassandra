@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-api
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: simple-api
+  replicas: {{ .Values.replicas }}
+  template:
+    metadata:
+      labels:
+        app: simple-api
+    spec:
+      containers:
+      - name: simple-api-service
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command: ["/bin/bash"]
+        args: ["-c","/opt/target/pack/bin/main"]
+        envFrom:
+        - secretRef:
+            name: dbcred
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Always
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            memory: "{{ .Values.resources.memoryRequestsSize }}"
+            cpu: "{{ .Values.resources.cpuRequestsSize }}"
+          limits:
+            memory: "{{ .Values.resources.memoryLimitsSize }}"
+            cpu: "{{ .Values.resources.cpuLimitsSize }}"
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecrets }}

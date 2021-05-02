@@ -1,0 +1,6 @@
+# Declare variables to be passed into the templates
+namespace: simple_namespace
+
+image:
+  repository: cassandra
+  tag: 3.11.10
