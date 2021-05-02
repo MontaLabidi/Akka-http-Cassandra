@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  cassandra:
+    image: cassandra:${CASSANDRA_VERSION}
+    ports:
+      - "9042:9042"
+    expose:
+      - "9042"
+    volumes:
+      - ./out/cassandra_data:/var/lib/cassandra
+
+  cassandra-load-keyspace:
+    container_name: cassandra-load-keyspace
+    image: cassandra:${CASSANDRA_VERSION}
+    depends_on:
+      - cassandra
+    volumes:
+      - ./script/insert-example-data.cql:/insert-example-data.cql
+    command: /bin/bash -c "sleep 60 &&echo loading cassandra keyspace && cqlsh cassandra -f /insert-example-data.cql"
