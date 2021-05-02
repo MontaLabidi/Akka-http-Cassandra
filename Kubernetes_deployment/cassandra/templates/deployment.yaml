@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cassandradb
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: cassandradb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: cassandradb
+    spec:
+      containers:
+        - name: cassandradb
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 9042
+          imagePullPolicy: Always

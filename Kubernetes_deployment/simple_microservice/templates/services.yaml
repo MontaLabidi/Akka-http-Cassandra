@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: simple-api-service
+  namespace: {{ .Values.namespace }}
+  labels:
+    name: simple-api-service
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    port: 80
+  selector:
+    app: simple-api
