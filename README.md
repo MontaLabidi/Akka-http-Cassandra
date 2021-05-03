@@ -70,86 +70,59 @@ If you're using docker-machine then the API will be available at ``<docker-machi
  otherwise it should be `localhost`.
 
 With the service up, you can start sending HTTP requests.
+
+#### Get a particular person:
+
 First lets see the list of all persons in the DB:
 
 ```
 $ curl -w "\n" -X GET localhost/persons
-[
-    {
-        "age": 25,
-        "birth_date": "1996-02-12",
-        "id": "256fce82-2358-4152-a3ad-990b20bb7c37",
-        "job_title": "Software Engineer",
-        "name": "Monta"
-    }
-]
+[ { "age": 25, "birth_date": "1996-02-12", "id": "256fce82-2358-4152-a3ad-990b20bb7c37", "job_title": "Software Engineer", "name": "Monta" } ]
 ```
 
-### Get a particular person:
+#### Get a particular person:
 
 we can get a person just by providing their id:
 
 ```
 $ curl -w "\n" -X GET localhost/persons/256fce82-2358-4152-a3ad-990b20bb7c37
-{
-    "age": 25,
-    "birth_date": "1996-02-12",
-    "id": "256fce82-2358-4152-a3ad-990b20bb7c37",
-    "job_title": "Software Engineer",
-    "name": "Monta"
-}
+{ "age": 25, "birth_date": "1996-02-12", "id": "256fce82-2358-4152-a3ad-990b20bb7c37", "job_title": "Software Engineer", "name": "Monta" }
 ```
 
-### Add a person:
+#### Add a person:
 
 We can add a person by providing the name, age, birth date, and the job title is optional.
 
 ```
 $ curl -w "\n" -X POST -H "Content-Type: application/json" -d '{ "name": "Jack", "age": 25, "birth_date": "1996-04-12"' localhost/persons 
-{
-    "age": 25,
-    "birth_date": "1996-04-12",
-    "id": "50571374-469e-41de-99f7-a8c0b8988a78",
-    "job_title": null,
-    "name": "Jack"
-}
+{ "age": 25, "birth_date": "1996-04-12", "id": "50571374-469e-41de-99f7-a8c0b8988a78", "job_title": null, "name": "Jack" }
+
 $ curl -w "\n" -X GET localhost/persons
-[
-    {
-        "age": 25,
-        "birth_date": "1996-02-12",
-        "id": "256fce82-2358-4152-a3ad-990b20bb7c37",
-        "job_title": "Software Engineer",
-        "name": "Monta"
-    },
-    {
-        "age": 25,
-        "birth_date": "1996-04-12",
-        "id": "50571374-469e-41de-99f7-a8c0b8988a78",
-        "job_title": null,
-        "name": "Jack"
-    }
-]
+[ { "age": 25, "birth_date": "1996-02-12", "id": "256fce82-2358-4152-a3ad-990b20bb7c37", "job_title": "Software Engineer", "name": "Monta" }, { "age": 25, "birth_date": "1996-04-12", "id": "50571374-469e-41de-99f7-a8c0b8988a78", "job_title": null, "name": "Jack" } ]
 ```
 
-### Delete a person:
+#### Update a person:
+
+We can update a person information by providing the id and the new information:
+
+```
+$ curl -w "\n" -X PATCH -H "Content-Type: application/json" -d '{ "name": "Marck", "age": 25, "birth_date": "1996-04-12"' localhost/persons 
+{ "age": 25, "birth_date": "1996-04-12", "id": "50571374-469e-41de-99f7-a8c0b8988a78", "job_title": null, "name": "Mark" }
+
+$ curl -w "\n" -X GET localhost/persons
+[ { "age": 25, "birth_date": "1996-02-12", "id": "256fce82-2358-4152-a3ad-990b20bb7c37", "job_title": "Software Engineer", "name": "Monta" }, { "age": 25, "birth_date": "1996-04-12", "id": "50571374-469e-41de-99f7-a8c0b8988a78", "job_title": null, "name": "Mark" } ]
+```
+
+#### Delete a person:
 
 To delete a person we just need to provide their id:
 
 ```
 $ curl -w "\n" -X DELETE localhost/persons/50571374-469e-41de-99f7-a8c0b8988a78
-Deleted person with id 19
+Deleted person with id 50571374-469e-41de-99f7-a8c0b8988a78
 
-$ curl -w "\n" -X GET localhost:8080/persons
-[
-    {
-        "age": 25,
-        "birth_date": "1996-02-12",
-        "id": "256fce82-2358-4152-a3ad-990b20bb7c37",
-        "job_title": "Software Engineer",
-        "name": "Monta"
-    }
-]
+$ curl -w "\n" -X GET localhost/persons
+[ { "age": 25, "birth_date": "1996-02-12", "id": "256fce82-2358-4152-a3ad-990b20bb7c37", "job_title": "Software Engineer", "name": "Monta" } ]
 
 ```
 
