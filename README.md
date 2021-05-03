@@ -1,12 +1,12 @@
 # akka-http-cassandra-docker-kubernetes
-A Simple server with simple REST APIs to showcase [Akka HTTP](https://doc.akka.io/docs/akka-http/current/?language=scala)
-with [Cassandra]( https://cassandra.apache.org/) using docker, and a bonus Kubernetes manifests to deploy on a Kubernetes cluster.
+A simple (micro)service with simple REST APIs to showcase [Akka HTTP](https://doc.akka.io/docs/akka-http/current/?language=scala)
+with [Cassandra]( https://cassandra.apache.org/) using docker and docker-compose, and a bonus Kubernetes manifests to deploy on a Kubernetes cluster.
 
 
 ## Requirements
 
 - Docker
-- Docker-compose
+- Docker-Compose
 - Kubernets + Helm (Optional)
 
 
@@ -32,7 +32,7 @@ The file `config/env.conf` consists of the following:
 
 ### .env file configuration
 
-The `.env` file is used to pass variables to the docker-compose files. Make sure to update the variables defined
+The `.env` file used to pass variables to the docker-compose files. Make sure to update the variables defined
  there with the correct values.
 
 ```
@@ -51,7 +51,7 @@ To spin up a Cassandra docker container you need to run the following:
 docker-compose -f cassandra.yml up -d
 ```
 
-This will start an instance of cassandra with the specified version as well as bootstrap it with som data.
+This will start an instance of cassandra with the specified version as well as bootstrap it with some data.
 
 ### Start the Application
 
@@ -61,7 +61,12 @@ This made easy with a single command:
 docker-compose up --build
 ```
 
-A detailed description of the APIs is comming soon.
+The docker image is also equipped with the `cqlsh` tool to access cassandra using the service's container
+for debugging purposes.
+
+### Usage
+
+A detailed description of the APIs is coming soon.
 
 ## Deployment on Kubernetes
 
