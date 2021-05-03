@@ -13,7 +13,7 @@ object PersonRoutes {
     path("persons") {
       onSuccess(allPersons) {
         case persons: List[Person] =>
-          complete(List(persons))
+          complete(persons)
         case _ =>
           complete(StatusCodes.InternalServerError)
       }
