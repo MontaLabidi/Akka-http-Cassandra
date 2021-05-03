@@ -126,6 +126,10 @@ $ curl -w "\n" -X GET localhost/persons
 
 ```
 
+### Unit Tests
+
+Add some unit tests.
+
 ## Deployment on Kubernetes
 
 
