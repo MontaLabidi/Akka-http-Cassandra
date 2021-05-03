@@ -3,16 +3,16 @@ A simple (micro)service with simple REST APIs to showcase [Akka HTTP](https://do
 with [Cassandra]( https://cassandra.apache.org/) using docker and docker-compose, and a bonus Kubernetes manifests to deploy on a Kubernetes cluster.
 
 
-## Requirements
+## Pre-requisites
 
-- Docker
-- Docker-Compose
-- Kubernets + Helm (Optional)
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker-Compose](https://docs.docker.com/compose/install/)
+- [Kubernetes](https://kubernetes.io/docs/tasks/tools/) + [Helm](https://helm.sh/docs/intro/install/)
 
 
 ## Setup Environment
 
-### env.conf file configuration
+### 1- Configure env.conf file
 
 In order to run, most of the containers needs to have the right credentials to access a Cassandra database.
 
@@ -30,7 +30,7 @@ The file `config/env.conf` consists of the following:
 
 ---
 
-### .env file configuration
+### 2- Configure .env file
 
 The `.env` file used to pass variables to the docker-compose files. Make sure to update the variables defined
  there with the correct values.
@@ -43,7 +43,7 @@ IMAGE_TAG=0.1
 
 ## Run the application with Docker-Compose
 
-### Spin up Cassandra Database
+### 1- Spin up Cassandra Database
 
 To spin up a Cassandra docker container you need to run the following: 
 
@@ -53,7 +53,7 @@ docker-compose -f cassandra.yml up -d
 
 This will start an instance of cassandra with the specified version as well as bootstrap it with some data.
 
-### Start the Application
+### 2- Start the Application
 
 This made easy with a single command:
  
@@ -64,92 +64,65 @@ docker-compose up --build
 The docker image is also equipped with the `cqlsh` tool to access cassandra using the service's container
 for debugging purposes.
 
-### Usage
+## Usage
 
 If you're using docker-machine then the API will be available at ``<docker-machine ip>``
  otherwise it should be `localhost`.
 
 With the service up, you can start sending HTTP requests.
+
+#### Get all persons:
+
 First lets see the list of all persons in the DB:
 
 ```
 $ curl -w "\n" -X GET localhost/persons
-[
-    {
-        "age": 25,
-        "birth_date": "1996-02-12",
-        "id": "256fce82-2358-4152-a3ad-990b20bb7c37",
-        "job_title": "Software Engineer",
-        "name": "Monta"
-    }
-]
+[ { "age": 25, "birth_date": "1996-02-12", "id": "256fce82-2358-4152-a3ad-990b20bb7c37", "job_title": "Software Engineer", "name": "Monta" } ]
 ```
 
-### Get a particular person:
+#### Get a particular person:
 
 we can get a person just by providing their id:
 
 ```
 $ curl -w "\n" -X GET localhost/persons/256fce82-2358-4152-a3ad-990b20bb7c37
-{
-    "age": 25,
-    "birth_date": "1996-02-12",
-    "id": "256fce82-2358-4152-a3ad-990b20bb7c37",
-    "job_title": "Software Engineer",
-    "name": "Monta"
-}
+{ "age": 25, "birth_date": "1996-02-12", "id": "256fce82-2358-4152-a3ad-990b20bb7c37", "job_title": "Software Engineer", "name": "Monta" }
 ```
 
-### Add a person:
+#### Add a person:
 
 We can add a person by providing the name, age, birth date, and the job title is optional.
 
 ```
 $ curl -w "\n" -X POST -H "Content-Type: application/json" -d '{ "name": "Jack", "age": 25, "birth_date": "1996-04-12"' localhost/persons 
-{
-    "age": 25,
-    "birth_date": "1996-04-12",
-    "id": "50571374-469e-41de-99f7-a8c0b8988a78",
-    "job_title": null,
-    "name": "Jack"
-}
+{ "age": 25, "birth_date": "1996-04-12", "id": "50571374-469e-41de-99f7-a8c0b8988a78", "job_title": null, "name": "Jack" }
+
 $ curl -w "\n" -X GET localhost/persons
-[
-    {
-        "age": 25,
-        "birth_date": "1996-02-12",
-        "id": "256fce82-2358-4152-a3ad-990b20bb7c37",
-        "job_title": "Software Engineer",
-        "name": "Monta"
-    },
-    {
-        "age": 25,
-        "birth_date": "1996-04-12",
-        "id": "50571374-469e-41de-99f7-a8c0b8988a78",
-        "job_title": null,
-        "name": "Jack"
-    }
-]
+[ { "age": 25, "birth_date": "1996-02-12", "id": "256fce82-2358-4152-a3ad-990b20bb7c37", "job_title": "Software Engineer", "name": "Monta" }, { "age": 25, "birth_date": "1996-04-12", "id": "50571374-469e-41de-99f7-a8c0b8988a78", "job_title": null, "name": "Jack" } ]
 ```
 
-### Delete a person:
+#### Update a person:
+
+We can update a person information by providing the id and the new information:
+
+```
+$ curl -w "\n" -X PATCH -H "Content-Type: application/json" -d '{ "name": "Marck", "age": 25, "birth_date": "1996-04-12"' localhost/persons 
+{ "age": 25, "birth_date": "1996-04-12", "id": "50571374-469e-41de-99f7-a8c0b8988a78", "job_title": null, "name": "Mark" }
+
+$ curl -w "\n" -X GET localhost/persons
+[ { "age": 25, "birth_date": "1996-02-12", "id": "256fce82-2358-4152-a3ad-990b20bb7c37", "job_title": "Software Engineer", "name": "Monta" }, { "age": 25, "birth_date": "1996-04-12", "id": "50571374-469e-41de-99f7-a8c0b8988a78", "job_title": null, "name": "Mark" } ]
+```
+
+#### Delete a person:
 
 To delete a person we just need to provide their id:
 
 ```
 $ curl -w "\n" -X DELETE localhost/persons/50571374-469e-41de-99f7-a8c0b8988a78
-Deleted person with id 19
+Deleted person with id 50571374-469e-41de-99f7-a8c0b8988a78
 
-$ curl -w "\n" -X GET localhost:8080/persons
-[
-    {
-        "age": 25,
-        "birth_date": "1996-02-12",
-        "id": "256fce82-2358-4152-a3ad-990b20bb7c37",
-        "job_title": "Software Engineer",
-        "name": "Monta"
-    }
-]
+$ curl -w "\n" -X GET localhost/persons
+[ { "age": 25, "birth_date": "1996-02-12", "id": "256fce82-2358-4152-a3ad-990b20bb7c37", "job_title": "Software Engineer", "name": "Monta" } ]
 
 ```
 
