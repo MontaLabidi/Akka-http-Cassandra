@@ -1,2 +1,124 @@
-# akka-http-microservice-docker-kubernetes
-A Simple server with simple REST API to showcase AKKA HTTP with the dockerization steps and Kubernetes manifests to deploy on a Kubernetes cluster.
+# akka-http-cassandra-docker-kubernetes
+A Simple server with simple REST APIs to showcase [Akka HTTP](https://doc.akka.io/docs/akka-http/current/?language=scala)
+with [Cassandra]( https://cassandra.apache.org/) using docker, and a bonus Kubernetes manifests to deploy on a Kubernetes cluster.
+
+
+## Requirements
+
+- Docker
+- Docker-compose
+- Kubernets + Helm (Optional)
+
+
+## Setup Environment
+
+### env.conf file configuration
+
+In order to run, most of the containers needs to have the right credentials to access a Cassandra database.
+
+The file `config/env.conf` contains some default values for a quick setup, 
+so please update the file with more convenient credentials before runtime to make the database more secure.
+
+---
+The file `config/env.conf` consists of the following:
+
+* `DB_HOST`=The hostname of the Cassandra database
+* `DB_PORT`=The port to use to connect to the Cassandra database
+* `DB_USER`=The database user to connect with
+* `DB_PASS`=The password to use to connect to the Cassandra database. Make sure the password is NOT QUOTED!
+* `KEYSPACE`=The keyspace name to be used by the application`
+
+---
+
+### .env file configuration
+
+The `.env` file is used to pass variables to the docker-compose files. Make sure to update the variables defined
+ there with the correct values.
+
+```
+CONTAINER_REGISTRY=some.registry.hub
+CASSANDRA_VERSION=3.11.10
+IMAGE_TAG=0.1
+```
+
+## Run the application with Docker-Compose
+
+### Spin up Cassandra Database
+
+To spin up a Cassandra docker container you need to run the following: 
+
+```
+docker-compose -f cassandra.yml up -d
+```
+
+This will start an instance of cassandra with the specified version as well as bootstrap it with som data.
+
+### Start the Application
+
+This made easy with a single command:
+ 
+```
+docker-compose up --build
+```
+
+A detailed description of the APIs is comming soon.
+
+## Deployment on Kubernetes
+
+
+### 1 - Install Helm
+
+`Helm` is a Kubernetes package manager. It has both a client and a server side.
+The client side is a binary that needs to be installed on the control box
+
+https://helm.sh/docs/intro/install/
+
+NOTE: Make sure to install Helm 3 or later versions
+
+### 2 - Prepare configuration files
+
+#### env.conf
+
+The file env.conf should have all the fields filled out with the correct Cassandra Database credentials in order 
+to be able to connect. [Check the previous section](#setup-environment)
+
+
+### 3 - Create Kubernetes Namespace
+
+Create the Kubernetes namespace using:
+```
+kubectl create namespace <namespace-name>
+```
+
+
+### 4 - Configure Kubernetes Secrets
+
+#### Image Pull Secret
+
+This secret is necessary in order to be able to pull images from the Container Registry if it is private.
+```
+kubectl create secret docker-registry registrycreds --docker-server=<your-registry-server> --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email> -n=<your-namespace>
+
+```
+
+#### Database Credentials Secret
+
+In order to keep secret our Azure credentials, make sure you create a Kubernetes secret for them using:
+
+```
+kubectl create secret generic dbcreds --from-env-file=config/env.conf --namespace=<namespace>
+```
+
+### 5 - Deploying the Application
+
+Make sure to update the `values.yaml` files with the appropriate values.
+ 
+Simply run this command to deploy a Cassandra instance on top the described namespace:
+```
+helm install -f Kubernetes_deployment/cassandra/values.yaml Kubernetes_deployment/cassandra/ --generate-name
+```
+and then, run the following to deploy the application:
+```
+helm install -f Kubernetes_deployment/simple_microservice/values.yaml  Kubernetes_deployment/simple_microservice/ --generate-name
+```
+
