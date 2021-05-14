@@ -199,6 +199,8 @@ $ curl -w "\n" -X GET localhost/persons
 ]
 ```
 
+Add more logic to showcase data processing with Scala.
+
 ## Deployment on Kubernetes
 
 
